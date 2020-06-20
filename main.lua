@@ -233,13 +233,14 @@ MultipleMarkAndRecall.Cmd = function(pid, cmd)
     -- Is the mark a real, stored mark?
     if spellName == "recall" and markName ~= "" and mark == nil then
         -- Telling the player the mark name is bad shouldn't have a success chance or cost any magicka.
-        chatMsg(pid, string.format(MultipleMarkAndRecall.config.msgRecallFailed, name))
+        chatMsg(pid, string.format(MultipleMarkAndRecall.config.msgRecallFailed, markName))
         return
     end
 
     local curMarkCount = tableHelper.getCount(player.data.customVariables.MultipleMarkAndRecall.marks)
     local maxMarkCount = getMarkCount(pid)
 
+    -- TODO: Allow overwriting an already saved mark?
     -- Is there any space for a new mark?
     if spell == "mark" and curMarkCount == maxMarkCount then
         -- Telling the player there's no free marks shouldn't have a success chance or cost any magicka.
