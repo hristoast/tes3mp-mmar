@@ -171,7 +171,7 @@ local function spellSuccess(pid)
     local mysticism = player.data.skills[Mysticism].base
     local willpower = player.data.attributes["Willpower"].base
     -- TODO: Actually get the value of this
-    local soundMagnitude = 0
+    -- local soundMagnitude = 0
 
     -- The OpenMW wiki and UESP seem to disagree on this formula; I'm going with the OpenMW wiki.
     --
