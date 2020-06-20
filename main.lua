@@ -98,7 +98,6 @@ local function getMarkCount(pid)
 	--     use together with either of the MultiMarkOMW plugins.
     -- TODO: Make these numbers configurable
     if mysticism > 50 then
-        local m = mysticism - 50
         local count = math.floor(mysticism / 5) - markCount
         extraMarks = extraMarks + 5 + count
     else
