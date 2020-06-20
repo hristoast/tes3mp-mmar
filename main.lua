@@ -43,11 +43,6 @@ local function chatMsg(pid, msg)
    tes3mp.SendMessage(pid, "[MMAR]: " .. msg .. "\n")
 end
 
-local function msgBox(pid, msg)
-    dbg("Called msgBox for pid: " .. pid .. " and msg: " .. msg)
-   tes3mp.MessageBox(pid, -1, msg)
-end
-
 local function canTeleport(pid)
     dbg("Called canTeleport for pid: " .. pid)
     local currentCell = tes3mp.GetCell(pid)
