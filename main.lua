@@ -5,6 +5,7 @@ local logPrefix = "[ " .. scriptName .." ]: "
 
 local Mysticism = "Mysticism"
 local teleportForbidden = {
+    "Akulakhan's Chamber",
     "Sotha Sil,", "Solstheim, Mortrag Glacier: Entry", "Solstheim, Mortrag Glacier: Outer Ring",
     "Solstheim, Mortrag Glacier: Inner Ring", "Solstheim, Mortrag Glacier: Huntsman's Hall"
 }
