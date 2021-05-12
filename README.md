@@ -52,6 +52,14 @@ String.  The chat message shown on a successful recall.  Any occurance of `%s` w
 
 String.  The chat message shown when a nonexistent recall name is given.  Default: `#FF0000Recall failed; that mark doesn't exist!#FFFFFF`
 
+* `over10mod`
+
+Integer.  Magic number that affects the number of marks you get every 10 levels after your Mysticism hits 10.  Default: `2`
+
+* `over50mod`
+
+Integer.  Magic number that affects the number of marks you get every 5 levels after your Mysticism hits 50.  Default: `7`
+
 * `skillProgressPoints`
 
 Integer.  The number of progress points given to Mysticism on a successful spell cast; defaults to the value given by [MBSP](https://github.com/IllyaMoskvin/tes3mp-mbsp), for the vanilla value set this to `1`.  Default: `2`

@@ -17,6 +17,8 @@ MultipleMarkAndRecall.defaultConfig = {
     msgNotAllowed = color.Red .. "Teleportation is not allowed here!" .. color.Default,
     msgRecall = color.Green .. "Recalled to: \"%s\"!" .. color.Default,
     msgRecallFailed = color.Red .. "Recall failed; that mark doesn't exist!" .. color.Default,
+    over10mod = 2,
+    over50mod = 7,
     skillProgressPoints = 2,
     spellCost = 18,
     teleportForbidden = teleportForbidden,
@@ -35,8 +37,24 @@ local function fatal(msg)
    tes3mp.LogMessage(enumerations.log.FATAL, logPrefix .. msg)
 end
 
+local function warn(msg)
+    tes3mp.LogMessage(enumerations.log.WARN, logPrefix .. msg)
+end
+
 local function info(msg)
     tes3mp.LogMessage(enumerations.log.INFO, logPrefix .. msg)
+end
+
+-- Check for new settings that may not be present
+if MultipleMarkAndRecall.config.over10mod == nil then
+    warn("No 'over10mod' value was found in your config!")
+    warn("Please set that, the default of '2' is being used.")
+    MultipleMarkAndRecall.config.over10mod = 2
+end
+if MultipleMarkAndRecall.config.over50mod == nil then
+    warn("No 'over50mod' value was found in your config!")
+    warn("Please set that, the default of '7' is being used.")
+    MultipleMarkAndRecall.config.over50mod = 7
 end
 
 local function chatMsg(pid, msg)
@@ -92,21 +110,46 @@ local function getMarkCount(pid)
     local extraMarks = 0
     local markCount = 2
     local mysticism = Players[pid].data.skills[Mysticism].base
+    local totalMarks
 
-    -- From the `Teleport_Menu2` script in "MultiMarkOMW-MysticismBalance-1.1.esp":
-	--     optional: get between 2 and 18 marks depending on Mysticism
-	--     (additional mark every 10 levels then every 5 levels after 50)
-	--     use together with either of the MultiMarkOMW plugins.
-    -- TODO: Make these numbers configurable
-    if mysticism > 50 then
-        local count = math.floor(mysticism / 5) - markCount
-        extraMarks = extraMarks + 5 + count
-    else
-        local count = math.floor(mysticism / 10) - markCount
+--[[
+
+From the `Teleport_Menu2` script in "MultiMarkOMW-MysticismBalance-1.1.esp"
+(and the readme):
+
+  optional: get between 2 and 18 marks depending on Mysticism
+  (additional mark every 10 levels then every 5 levels after 50)
+  use together with either of the MultiMarkOMW plugins.
+
+UNFORTUNATELY.... their maths do not actually work like that.
+These scripts were extracted from the plugin (thanks Delta Plugin!):
+
+  ...
+  Set TeleportMaxSlots to ( player->GetMysticism )
+  Set TeleportMaxSlots to ( ( ( TeleportMaxSlots - 50 ) / 5 ) + 7 )
+  ...
+  Set TeleportMaxSlots to ( player->GetMysticism )
+  Set TeleportMaxSlots to ( ( TeleportMaxSlots / 10 ) + 2 )
+  ...
+
+The '+ 7' and '+ 2' are what break the described formula, and it's unclear to
+me why they do that but I'll copy that behavior too, if only to allow for more
+marks.
+
+]]--
+
+    if mysticism >= 50 then
+        local count = math.floor((mysticism - 50) / 5) + MultipleMarkAndRecall.config.over50mod
         extraMarks = extraMarks + count
+
+    elseif mysticism >= 10 then
+        extraMarks = math.floor(mysticism / 10) + MultipleMarkAndRecall.config.over10mod
+
+    else
+        extraMarks = 0
     end
 
-    local totalMarks = markCount + extraMarks
+    totalMarks = markCount + extraMarks
 
     if totalMarks > MultipleMarkAndRecall.config.maxMarks then
         totalMarks = MultipleMarkAndRecall.config.maxMarks
