@@ -220,12 +220,19 @@ local function spellSuccess(pid)
     -- The OpenMW wiki and UESP seem to disagree on this formula; I'm going with the OpenMW wiki.
     --
     -- castChance = (lowestSkill - spellCost + actor.castBonus + 0.2 * actorWillpower + 0.1 * actorLuck) * fatigueTerm
-    -- Source: https://wiki.openmw.org/index.php?title=Research:Magic#Spell_Casting
+    -- fatigueTerm = fFatigueBase - fFatigueMult * (1 - normalizedFatigue)
+    --
+    -- Source:  https://wiki.openmw.org/index.php?title=Research:Magic#Spell_Casting
+    -- Related: https://wiki.openmw.org/index.php?title=Research:Common_Terms
+    --          https://wiki.openmw.org/index.php?title=GMSTs_(status)
     --
     -- Chance of success is (Spell's skill * 2 + Willpower / 5 + Luck / 10 - Spell cost - Sound magnitude) * (0.75 + 0.5 * Current Fatigue/Maximum Fatigue)
     -- Source: https://en.uesp.net/wiki/Morrowind:Spells
 
-    local chance = (mysticism - MultipleMarkAndRecall.config.spellCost + 0.2 * willpower + 0.1 * luck) * (currentFatigue / maximumFatigue)
+    local normalizedFatigue = math.max(0, currentFatigue / maximumFatigue)
+    local ft = 1.25 - 0.5 * (1 - normalizedFatigue)
+    local fatigueTerm = tonumber(string.format("%.3f", ft))
+    local chance = math.floor((2 * mysticism - MultipleMarkAndRecall.config.spellCost + 0.2 * willpower + 0.1 * luck) * fatigueTerm)
     local roll = math.random(1, 100)
 
     if roll < chance then
