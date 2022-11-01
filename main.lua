@@ -301,7 +301,7 @@ MultipleMarkAndRecall.Cmd = function(pid, cmd)
     end
 
     -- Now we start caring about magicka levels... do you have enough magicka to cast the spell?
-    player:SaveStatsDynamic()
+    player:SaveStatsDynamic(packetReader.GetPlayerPacketTables(pid, "PlayerStatsDynamic"))
     if player.data.stats.magickaCurrent < MultipleMarkAndRecall.config.spellCost and markName ~= "" then
         chatMsg(pid, color.Red .. "You do not have enough magicka to cast " .. Spell .. "!" .. color.Default)
         return
